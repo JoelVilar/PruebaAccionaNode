@@ -20,7 +20,7 @@ router.get('/favs', (req,res) => {
 })
 
 router.get('/favs/:listName', (req,res) => {
-    const listSelected = data.find(lista => lista.name.match(req.params.listName))
+    const listSelected = favLists.find(lista => lista.name.match(req.params.listName))
     res.send( listSelected ? listSelected : {} )
 })
 
