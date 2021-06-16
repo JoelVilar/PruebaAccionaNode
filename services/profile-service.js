@@ -8,7 +8,7 @@ async function initData(){
         apiData = data.results
 }
 
-const favLists = [{ name : '' , data : [] }]
+const favLists = []
 let apiData = initData()
 
 router.get('', (req,res) =>{
@@ -20,8 +20,8 @@ router.get('/favs', (req,res) => {
 })
 
 router.get('/favs/:listName', (req,res) => {
-    const listSelected = data.filter(lista => lista.name.match(req.params.listName))
-    res.send( listSelected.length > 0 ? listSelected : [] )
+    const listSelected = data.find(lista => lista.name.match(req.params.listName))
+    res.send( listSelected ? listSelected : {} )
 })
 
 router.get('/:profileId', (req,res) => {
@@ -61,7 +61,6 @@ router.post('/favs', (req,res) => {
 
 router.post('', (req,res) => {
     let profileList = req.body
-    console.log(req.body)
     if(profileList.length > 0){
         apiData = profileList
     }
