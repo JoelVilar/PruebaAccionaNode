@@ -8,7 +8,7 @@ async function initData(){
         apiData = data.results
 }
 
-const favLists = [{ name : '' , data : [] }]
+const favLists = []
 let apiData = initData()
 
 router.get('', (req,res) =>{
@@ -20,8 +20,8 @@ router.get('/favs', (req,res) => {
 })
 
 router.get('/favs/:listName', (req,res) => {
-    const listSelected = data.filter(lista => lista.name.match(req.params.listName))
-    res.send( listSelected.length > 0 ? listSelected : [] )
+    const listSelected = favLists.find(lista => lista.name.match(req.params.listName))
+    res.send( listSelected ? listSelected : {} )
 })
 
 router.get('/:profileId', (req,res) => {
@@ -32,13 +32,34 @@ router.get('/:profileId', (req,res) => {
 
 router.post('/favs', (req,res) => {
     let favList = req.body
-    favList.length > 0 ?? favLists.push(favList)
-    res.send(favList)
+    if(favList){
+        let existingProfile = favLists.find(list => list.name.match(favList.name))
+        if(!!existingProfile) {
+            const profileUuid = favList.profile.login.uuid
+            if(existingProfile.data.some(profile => profile.login.uuid.includes(profileUuid))) {
+                favLists.map(list => 
+                    list.name.match(favList.name) ?
+                        list.data = list.data.filter( profile => !profile.login.uuid.match(profileUuid)) : list
+                )
+                res.send({ msg: "Profile removed succesfully." })
+            }else{
+                favLists.map(list => list.name.match(favList.name) ? list.data.push(favList.profile) : list)
+                res.send({ msg: "Profile added succesfully." })
+            }
+        }else{
+            favLists.push({
+                        name: favList.name,
+                        data: [ favList.profile ]
+                    })
+            res.send({ msg: "Profile added succesfully." })
+        }
+    }else{
+        res.send({ msg: "Something went wrong, try again." })
+    }
 })
 
 router.post('', (req,res) => {
     let profileList = req.body
-    console.log(req.body)
     if(profileList.length > 0){
         apiData = profileList
     }
