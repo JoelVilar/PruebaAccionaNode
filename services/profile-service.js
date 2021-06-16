@@ -33,9 +33,8 @@ router.get('/:profileId', (req,res) => {
 router.post('/favs', (req,res) => {
     let favList = req.body
     if(favList){
-        let existingFavList = favLists.some(list => list.name.match(favList.name))
-        if(existingFavList) {
-            let existingProfile = favLists.find(list => list.name.match(favList.name))
+        let existingProfile = favLists.find(list => list.name.match(favList.name))
+        if(!!existingProfile) {
             const profileUuid = favList.profile.login.uuid
             if(existingProfile.data.some(profile => profile.login.uuid.includes(profileUuid))) {
                 favLists.map(list => 
